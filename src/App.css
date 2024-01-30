@@ -3,29 +3,203 @@
 }
 
 .App-logo {
-  height: 40vmin;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 5s linear;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
   color: #61dafb;
+}
+
+body {
+  min-height: 100vh;
+}
+
+header {
+  z-index: 3; /* Place it above other elements */
+}
+
+.page-link {
+  text-decoration: none;
+  color: white;
+}
+
+p {
+  text-align: justify;
+}
+
+.main-section {
+  padding: 2rem;
+}
+
+.page-navbar {
+  background-color: #282c34;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.website-logo {
+  width: 80px;
+  margin-right: auto; /* Push to the far-left */
+}
+
+/* Optionally, you can add margin or other styles to the other elements */
+.page-navbar > *:not(.website-logo) {
+  margin-left: 10px; /* Adjust the margin as needed */
+}
+
+.social-logo {
+  width: 40px;
+}
+
+.social-links {
+  list-style: none; /* Remove list bullets */
+  display: flex; /* Display items horizontally */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  padding: 0; /* Remove default padding for the ul element */
+}
+
+.social-links li {
+  margin-right: 40px; /* Add spacing between social links */
+}
+
+.social-links li:last-child {
+  margin-right: 0;
+}
+
+/* Optionally, you can style the links and images */
+.social-links a {
+  text-decoration: none; /* Remove underline from links */
+  color: #333; /* Set link color */
+}
+
+.social-links img {
+  width: 40px; /* Set image width */
+  height: 40px; /* Set image height */
+}
+
+.post-cards {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.post-card {
+  /* Your existing styles for post cards */
+  /* Add styles to transition opacity smoothly */
+  text-align: left;
+  transition: opacity 0.3s ease-in-out;
+  margin: 0.3%; /* Add margin for spacing between posts */
+  padding: 0.3%;
+  max-width: 18.8%; /* Set a maximum width for each post card */
+}
+
+.post-card img {
+  width: 100%;
+  max-height: 200px; /* Adjust the max height as needed */
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.post-card h2 {
+  height: 3rem;
+}
+
+.post-card.selected {
+  opacity: 0.7;
+}
+
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2; /* Increase the z-index value */
+}
+
+.post-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3; /* Increase the z-index value */
+}
+
+.selected-post-genres {
+  color: rgb(80, 80, 80);
+}
+
+.selected-post {
+  background: #fff;
+  /* padding: 20px; */
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  position: relative; /* Add position relative */
+  z-index: 4; /* Increase the z-index value */
+}
+
+.selected-post img {
+  max-width: 100%;
+  border-radius: inherit;
+  /* max-height: 300px; */
+  object-fit: contain;
+  /* margin-bottom: 10px; */
+  padding: 0px;
+}
+
+.selected-post i {
+  padding: 0;
+}
+
+
+.selected-post * {
+  padding: 10px 30px;
+}
+
+.selected-post a {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2e3642; /* GitHub's primary color */
+  color: #ffffff; /* White text */
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.selected-post a:hover {
+  background-color: #1C2128; /* Darker color on hover */
+}
+
+.selected-post ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px; /* Adjust margin as needed */
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 30px;
+  color: #333;
 }
 
 @keyframes App-logo-spin {
@@ -34,5 +208,23 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .post-cards {
+    width: 100%; /* Full width on smaller screens */
+  }
+
+  .post-card {
+    max-width: 48%; /* Adjust max-width for better responsiveness */
+  }
+}
+
+@media (max-width: 480px) {
+  .post-card {
+    max-width: 100%; /* Full width on even smaller screens */
   }
 }
