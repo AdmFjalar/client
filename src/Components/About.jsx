@@ -2,7 +2,7 @@ import React from "react";
 
 const About = () => {
   return (
-    <p>
+    <p className="about-me">
       I am Oliver, a Swedish software engineering student in New Zealand. I am
       passionate about privacy and security, and open-source software. I am a
       team-player, communicating my intentions and any uncertanties. I can also

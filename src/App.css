@@ -24,6 +24,10 @@ header {
   z-index: 3; /* Place it above other elements */
 }
 
+h1 {
+  font-size: calc(10px + 2.3vmin);
+}
+
 .page-link {
   text-decoration: none;
   color: white;
@@ -96,14 +100,20 @@ p {
   margin: 0 auto;
 }
 
+.about-me {
+  width: 90%;
+  margin: 10px auto;
+}
+
 .post-card {
   /* Your existing styles for post cards */
   /* Add styles to transition opacity smoothly */
   text-align: left;
-  transition: opacity 0.3s ease-in-out;
+  transition: transform 0.3s ease; /* Add transition property for smooth animation */
   margin: 0.3%; /* Add margin for spacing between posts */
   padding: 0.3%;
   max-width: 18.8%; /* Set a maximum width for each post card */
+  cursor: pointer;
 }
 
 .post-card img {
@@ -117,6 +127,11 @@ p {
   height: 3rem;
 }
 
+.no-projects {
+  text-align: center;
+  margin: 20px auto;
+}
+
 .post-card.selected {
   opacity: 0.7;
 }
@@ -127,7 +142,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 2; /* Increase the z-index value */
 }
 
@@ -147,7 +162,7 @@ p {
   background: #fff;
   /* padding: 20px; */
   border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   text-align: left;
   position: relative; /* Add position relative */
   z-index: 4; /* Increase the z-index value */
@@ -200,6 +215,58 @@ p {
   cursor: pointer;
   font-size: 30px;
   color: #333;
+  -webkit-text-stroke: white 1px;
+  animation: rotateAndScale 5s infinite; /* Adjust the duration as needed */
+}
+
+@keyframes rotateAndScale {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  2.5% {
+    transform: rotate(10deg) scale(1.2);
+  }
+  5% {
+    transform: rotate(-10deg) scale(1.2);
+  }
+  7.5% {
+    transform: rotate(10deg) scale(1.2);
+  }
+  10% {
+    transform: rotate(-10deg) scale(1.2);
+  }
+  12.5% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+/* .sortMenu {
+  float: right;
+  margin-right: 5.7%;
+  margin-bottom: 1%;
+} */
+
+.sortMenu {
+  padding-right: 10%;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+label {
+  margin-right: 10px;
+}
+
+select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Optional: Style the selected option differently */
+select option:checked {
+  background-color: #007bff;
+  color: #fff;
 }
 
 @keyframes App-logo-spin {
@@ -211,9 +278,59 @@ p {
   }
 }
 
+.filter-menu {
+  position: relative;
+}
+
+.menu-toggle-btn {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  margin-right: 5.5%;
+  cursor: pointer;
+  float: right;
+}
+
+.filter-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 5%;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 40px;
+  z-index: 1;
+}
+
+.filter-options.visible {
+  display: block;
+}
+
+.filter-option {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.filter__button {
+  margin-right: 8px;
+}
+
+.reset-filters-btn {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
 
 /* Responsive styles for smaller screens */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .post-cards {
     width: 100%; /* Full width on smaller screens */
   }
@@ -226,5 +343,11 @@ p {
 @media (max-width: 480px) {
   .post-card {
     max-width: 100%; /* Full width on even smaller screens */
+  }
+}
+
+@media (max-width: 1500px) {
+  .post-card h2 {
+    height: 5rem!important;
   }
 }

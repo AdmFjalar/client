@@ -1,43 +1,61 @@
-// Import necessary modules
+// BlogPosts Component (BlogPosts.jsx)
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import moment from "moment";
+import PostCard from "./PostCard";
+import BackgroundOverlay from "./BackgroundOverlay";
+import SelectedPost from "./SelectedPost";
+import FilterMenu from "./FilterMenu";
+import SortMenu from "./SortMenu";
 
-// Define the BlogPosts component
 const BlogPosts = () => {
-  // Initialize state variables for the posts and the selected post
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [sortOption, setSortOption] = useState({
+    sortBy: "lastupdated",
+    sortOrder: "desc",
+  });
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [filterGenres, setFilterGenres] = useState([]);
+  const [availableGenres, setAvailableGenres] = useState([]); // State to store unique genres
 
-  // Use the useEffect hook to fetch data from the API when the component mounts
   useEffect(() => {
+    let apiUrl = "http://localhost:9000/api/posts";
+
+    if (selectedGenres.length > 0) {
+      // Build a query string to ensure all selected genres are present in each post
+      const genreQuery = selectedGenres
+        .map((genre) => `genres=${genre}`)
+        .join("&");
+      apiUrl += `?${genreQuery}`;
+    }
+
     axios
-      .get("http://localhost:9000/api/posts")
+      .get(apiUrl, { params: sortOption })
       .then((response) => {
-        // Set the posts state variable to the data received from the API
         setPosts(response.data);
+
+        // Extract unique genres from posts
+        const uniqueGenres = Array.from(
+          new Set(response.data.flatMap((post) => post.genres))
+        );
+        setAvailableGenres(uniqueGenres);
       })
       .catch((error) => {
-        // Log any errors that occur during the fetch
         console.error("Error fetching data: ", error);
       });
-  }, []);
+  }, [sortOption, selectedGenres]);
 
-  // Function to handle when a card is clicked
   const handleCardClick = (post) => {
-    // Set the selected post state variable to the post that was clicked
     document.body.style.overflow = "hidden";
     setSelectedPost(post);
   };
 
-  // Function to handle closing the overlay
   const closeOverlay = () => {
-    // Clear the selected post state variable
     document.body.style.overflow = "auto";
     setSelectedPost(null);
   };
 
-  // Function to truncate the description to a maximum of 150 characters
   const truncateDescription = (description) => {
     const maxLength = 150;
     return description.length > maxLength
@@ -45,15 +63,24 @@ const BlogPosts = () => {
       : description;
   };
 
-  // Function to format the last updated timestamp
   const formatLastUpdated = (timestamp) => {
     const lastUpdated = moment(timestamp);
     const daysAgo = moment().diff(lastUpdated, "days");
+    const hoursAgo = moment().diff(lastUpdated, "hours");
+
     if (daysAgo < 365) {
-      return `${daysAgo} days ago`;
+      if (hoursAgo <= 1) {
+        return `${hoursAgo} hour${hoursAgo === 1 ? "" : "s"} ago`;
+      } else if (hoursAgo <= 24) {
+        return `${hoursAgo} hours ago`;
+      } else if (daysAgo === 1) {
+        return `${daysAgo} day ago`;
+      } else {
+        return `${daysAgo} days ago`;
+      }
     } else {
       const yearsAgo = Math.floor(daysAgo / 365);
-      return `${yearsAgo} years ago`;
+      return `${yearsAgo} year${yearsAgo === 1 ? "" : "s"} ago`;
     }
   };
 
@@ -61,56 +88,139 @@ const BlogPosts = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  // Return the JSX to render
+  const handleSortChange = (event) => {
+    const selectedSort = event.target.value.split("-");
+    setSortOption({
+      sortBy: selectedSort[0],
+      sortOrder: selectedSort[1],
+    });
+  };
+
+  const handleGenreFilter = (event, genre) => {
+    event.stopPropagation();
+
+    const decodedGenre = decodeURIComponent(genre);
+
+    setSelectedGenres((prevGenres) => {
+      if (prevGenres.includes(decodedGenre)) {
+        return prevGenres.filter(
+          (selectedGenre) => selectedGenre !== decodedGenre
+        );
+      } else {
+        return [...prevGenres, decodedGenre];
+      }
+    });
+
+    setFilterGenres((prevGenres) => {
+      if (prevGenres.includes(decodedGenre)) {
+        return prevGenres.filter(
+          (selectedGenre) => selectedGenre !== decodedGenre
+        );
+      } else {
+        return [...prevGenres, decodedGenre];
+      }
+    });
+  };
+
+  const handleFilterCheckboxChange = (event, genre) => {
+    setFilterGenres((prevGenres) => {
+      const decodedGenre = decodeURIComponent(genre);
+
+      if (event.target.checked) {
+        return [...prevGenres, decodedGenre];
+      } else {
+        return prevGenres.filter(
+          (selectedGenre) => selectedGenre !== decodedGenre
+        );
+      }
+    });
+  };
+
+  const updateGenreCheckbox = (genre) => {
+    setSelectedGenres((prevGenres) => {
+      const decodedGenre = decodeURIComponent(genre);
+
+      if (prevGenres.includes(decodedGenre)) {
+        return prevGenres.filter(
+          (selectedGenre) => selectedGenre !== decodedGenre
+        );
+      } else {
+        return [...prevGenres, decodedGenre];
+      }
+    });
+  };
+
+  const resetFilters = () => {
+    setSelectedGenres([]);
+    setFilterGenres([]);
+  };
+
+  useEffect(() => {
+    let apiUrl = "http://localhost:9000/api/posts";
+
+    if (filterGenres.length > 0) {
+      const encodedGenres = filterGenres.map((genre) =>
+        encodeURIComponent(genre)
+      );
+      apiUrl += `?genres=${encodedGenres.join(",")}`;
+    }
+
+    axios
+      .get(apiUrl, { params: sortOption })
+      .then((response) => {
+        setPosts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, [sortOption, filterGenres]);
+
   return (
-    <div className="post-cards">
-      {/* Map over the posts array to create a card for each post */}
-      {posts.reverse().map((post) => (
-        <div
-          key={post._id}
-          onClick={() => handleCardClick(post)}
-          className={`post-card ${selectedPost === post ? "selected" : ""}`}
-        >
-          <img src={post.imagelink} alt={post.title} />
-          <h2>{post.title}</h2>
-          <p>{truncateDescription(post.description)}</p>
-          <p>
-            <i>{Capitalize(post.genres.join(", "))}</i>
-          </p>
-          <p>{formatLastUpdated(post.lastupdated)}</p>
-        </div>
-      ))}
-
-      {selectedPost && (
-        <div className="background-overlay" onClick={closeOverlay}></div>
-      )}
-
-      {selectedPost && (
-        <div className="post-overlay">
-          <div className="selected-post">
-            <div className="close-button" onClick={closeOverlay}>
-              &#10006; {/* Unicode character for a cross */}
-            </div>
-            <img src={selectedPost.imagelink} alt={selectedPost.title} />
-            <h2>{selectedPost.title}</h2>
-            <p>{selectedPost.description}</p>
-            <p className="selected-post-genres">
-              <i>{Capitalize(selectedPost.genres.join(", "))}</i>
-            </p>
-            <ul>
-              <li>
-                <a href={selectedPost.githublink}>View on GitHub</a>
-              </li>
-              <li>
-                <p>{formatLastUpdated(selectedPost.lastupdated)}</p>
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
+    <div>
+      <FilterMenu
+        availableGenres={availableGenres}
+        filterGenres={filterGenres}
+        handleFilterCheckboxChange={handleFilterCheckboxChange}
+        resetFilters={resetFilters}
+        Capitalize={Capitalize}
+      />
+      <SortMenu handleSortChange={handleSortChange} sortOption={sortOption} />
+      <div className="post-cards">
+        {posts.length === 0 ? (
+          <h1 className="no-projects">
+            <i>No projects found</i>
+          </h1>
+        ) : (
+          posts
+            .reverse()
+            .map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                handleCardClick={handleCardClick}
+                selectedPost={selectedPost}
+                updateGenreCheckbox={updateGenreCheckbox}
+                truncateDescription={truncateDescription}
+                formatLastUpdated={formatLastUpdated}
+                Capitalize={Capitalize}
+              />
+            ))
+        )}
+        {selectedPost && (
+          <div className="background-overlay" onClick={closeOverlay}></div>
+        )}
+        {selectedPost && (
+          <SelectedPost
+            selectedPost={selectedPost}
+            closeOverlay={closeOverlay}
+            handleGenreFilter={handleGenreFilter}
+            formatLastUpdated={formatLastUpdated}
+            Capitalize={Capitalize}
+          />
+        )}
+      </div>
     </div>
   );
 };
 
-// Export the BlogPosts component
 export default BlogPosts;

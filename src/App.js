@@ -4,10 +4,11 @@ import Footer from './Components/Footer';
 import Header from './Components/Header';
 import About from './Components/About';
 import BlogPosts from './Components/BlogPosts';
+import Blog from './Components/Blog';
 
 function App() {
-  const [blogPosts, setBlogPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(null);
+  // const [blogPosts, setBlogPosts] = useState([]);
+  // const [selectedPost, setSelectedPost] = useState(null);
 
   // useEffect(() => {
   //   // Function to make the API call
@@ -71,7 +72,9 @@ function App() {
             </div>
           )} */}
 
-          <BlogPosts/>
+          <Blog/>
+
+          {/* <BlogPosts/> */}
           <About/>
       </section>
       <Footer/>
